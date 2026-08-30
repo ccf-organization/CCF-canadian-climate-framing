@@ -85,6 +85,7 @@ paper/**
 !paper/CCF_Methodology/Latex/CCF_Methodology_SI.tex
 !paper/CCF_Methodology/Latex/CCF_Methodology_SI.pdf
 !paper/CCF_Methodology/Latex/references.bib
+!paper/CCF_Methodology/Latex/corpus_macros.tex
 # Figures used by the main manuscript (copied from submission_package/Figures/)
 !paper/CCF_Methodology/Latex/Figures/
 !paper/CCF_Methodology/Latex/Figures/*.png
@@ -97,9 +98,10 @@ paper/CCF_Methodology/Latex/submission_package/**
 # strictly local; nothing under Review/ is pushed to the public remote.
 paper/CCF_Methodology/Review/
 paper/CCF_Methodology/Review/**
-!paper/CCF_Science_to_policymakers/
-!paper/CCF_Science_to_policymakers/Latex/
-!paper/CCF_Science_to_policymakers/Latex/CCF_Science_to_policymakers.pdf
+# The science-to-policymakers paper now lives in its own repository
+# (https://github.com/antoinelemor/CCF-scientists-policymakers), so nothing
+# under paper/CCF_Science_to_policymakers/ is tracked here any more; the
+# blanket `paper/**` rule above covers it.
 
 # Scripts used for the methodology paper
 !paper/CCF_Methodology/Results/
@@ -148,7 +150,6 @@ Scripts/Annotation/second_phase
 
 # Archive folders
 paper/CCF_Methodology/Results/Scripts/Archives/
-paper/CCF_Science_to_policymakers/Results/Scripts/Archives/
 
 
 ##############################

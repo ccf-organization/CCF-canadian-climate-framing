@@ -1,0 +1,30 @@
+% ---------------------------------------------------------------------------
+% Corpus-level figures — SINGLE SOURCE OF TRUTH for the manuscript AND the SI.
+% Update these macros (and regenerate the input tables/figures) when a new
+% database version is released; do not hard-code corpus numbers in the text.
+% ---------------------------------------------------------------------------
+\newcommand{\CCFarticles}{283{,}964}      % articles in the corpus
+\newcommand{\CCFsentences}{9{,}908{,}776} % two-sentence analytical units
+\newcommand{\CCFsentApprox}{9.9}          % ditto, millions (approx, one decimal)
+\newcommand{\CCFembeddings}{10{,}192{,}740}% rows of CCF_sentence_embeddings
+\newcommand{\CCFembedApprox}{10.19}        % ditto, millions (approx)
+\newcommand{\CCFnewspapers}{22}           % distinct newspaper titles
+\newcommand{\CCFyearfirst}{1978}
+\newcommand{\CCFyearlast}{2026}
+\newcommand{\CCFnyears}{48}               % elapsed span: yearlast - yearfirst
+                                          % (Feb 1978 -> Jul 2026), not the count
+                                          % of calendar years touched
+\newcommand{\CCFenshare}{83.4}            % share of English units (%)
+\newcommand{\CCFfrshare}{16.6}            % share of French units (%)
+% Version-specific deposit identifiers and sizes (update on each release)
+% One version number for all three deposits (data SQL, data Parquet, code):
+% they are released together and must never drift apart again.
+\newcommand{\CCFversion}{2.1.0}
+\newcommand{\CCFsqldoi}{10.5281/zenodo.22019287}     % PostgreSQL edition (version DOI)
+\newcommand{\CCFparquetdoi}{10.5281/zenodo.22019288} % Parquet mirror (version DOI)
+\newcommand{\CCFcodedoi}{10.5281/zenodo.22019289}     % code & documentation deposit
+\newcommand{\CCFsqldoiConcept}{10.5281/zenodo.20346363}
+\newcommand{\CCFparquetdoiConcept}{10.5281/zenodo.20346372}
+\newcommand{\CCFcodedoiConcept}{10.5281/zenodo.21921214}
+\newcommand{\CCFsqlsize}{40}              % GB, CCF_Database.tar
+\newcommand{\CCFparquetsize}{17.5}        % GB, Parquet mirror

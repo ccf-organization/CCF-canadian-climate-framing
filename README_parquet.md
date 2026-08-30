@@ -1,9 +1,9 @@
 # CCF Database — Apache Parquet bundle
 
-This bundle ships the six relational tables of the **Canadian Climate Framing (CCF) Database** (version 2.0.1) as standalone Apache Parquet files (ZSTD-compressed). It is the no-database-server alternative to the canonical PostgreSQL edition. The two editions are sister Zenodo deposits, refreshed roughly every six months by the CCF observatory's continuous extraction–annotation pipeline; the concept DOIs below always resolve to the latest version:
+This bundle ships the six relational tables of the **Canadian Climate Framing (CCF) Database** (version 2.1.0) as standalone Apache Parquet files (ZSTD-compressed). It is the no-database-server alternative to the canonical PostgreSQL edition. The two editions are sister Zenodo deposits, refreshed roughly every six months by the CCF observatory's continuous extraction–annotation pipeline; the concept DOIs below always resolve to the latest version:
 
-- **PostgreSQL edition** (canonical): version DOI `10.5281/zenodo.21967283` — concept DOI [`10.5281/zenodo.20346363`](https://doi.org/10.5281/zenodo.20346363) — ships `CCF_Database.tar` (40 GB, `pg_dump -Fd` archive with HNSW indexing).
-- **Apache Parquet mirror** (this bundle): version DOI `10.5281/zenodo.21967286` — concept DOI [`10.5281/zenodo.20346372`](https://doi.org/10.5281/zenodo.20346372) — ships the six `.parquet` files described below.
+- **PostgreSQL edition** (canonical): version DOI `10.5281/zenodo.22019287` — concept DOI [`10.5281/zenodo.20346363`](https://doi.org/10.5281/zenodo.20346363) — ships `CCF_Database.tar` (40 GB, `pg_dump -Fd` archive with HNSW indexing).
+- **Apache Parquet mirror** (this bundle): version DOI `10.5281/zenodo.22019288` — concept DOI [`10.5281/zenodo.20346372`](https://doi.org/10.5281/zenodo.20346372) — ships the six `.parquet` files described below.
 
 Both formats share **identical schemas and identical row counts**; the only adaptation in Parquet is that the `halfvec(1024)` embedding column is materialised as a 1024-element `LIST<FLOAT>` and the JSONB entity arrays are serialised as UTF-8 JSON strings.
 
