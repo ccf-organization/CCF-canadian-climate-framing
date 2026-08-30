@@ -1,8 +1,6 @@
 <!-- COPIE GÉNÉRÉE — NE PAS ÉDITER ICI.
      Source unique : CCF-website (dépôt privé ccf-web), fichier CLAUDE.md à la racine.
-     Toute modification se fait là-bas puis se recopie ici à l'identique.
-     Ce dépôt-ci est le dépôt scientifique (papier Scientific Data + données publiées) :
-     le canon s'y applique à toute prose, figure ou page produite pour le papier. -->
+     Toute modification se fait dans la source puis se recopie (canon, règle 10.3). -->
 
 # CANON CCF — règles de maison, identité et charte
 
@@ -16,6 +14,7 @@
 > alors ce fichier dans la foulée.
 
 ## 0. Comment ce fichier s'utilise
+<!-- ccf:acces founder -->
 
 **Ordre d'autorité, sans exception : le code > ce canon > les skills > la mémoire.**
 Une règle vue ici mais contredite par le code en production : le code fait foi, et tu signales
@@ -35,9 +34,17 @@ toujours depuis `Servers/` (le chemin par le lien ouvre une mémoire de projet d
 Le papier et les données vivent dans `~/Documents/Github/CCF-canadian-climate-framing` (dépôt
 public), qui reçoit une copie de ce canon.
 
+**Ce canon est servi aux collaborateurs par le serveur MCP, section par section.** Chaque titre
+de niveau 2 porte un marqueur invisible en commentaire HTML — `<!-- ccf:acces tous -->` ou
+`<!-- ccf:acces founder -->` — qui décide si la section part dans le brief d'un collaborateur
+selon son tier. Les règles de maison (interdits, marque, visuel, rédaction, gabarits, pièges)
+sont réservées au tier **fondation** : ce sont celles qui engagent notre nom. En ajoutant une
+section, pose son marqueur ; sans marqueur, elle est traitée comme réservée.
+
 ---
 
 ## 1. Identité
+<!-- ccf:acces tous -->
 
 **Ce qu'est CCF.** L'observatoire du cadrage médiatique climatique canadien : une base annotée
 (283 964 articles, 22 médias, 1978-2026, 9,9 M d'unités de deux phrases annotées par 128
@@ -67,6 +74,7 @@ qui ne font que les rapporter.
 ---
 
 ## 2. Les interdits absolus
+<!-- ccf:acces founder -->
 
 Ces règles ont été posées par Antoine, souvent après avoir été enfreintes. Aucune n'est
 négociable, et aucune ne se contourne « juste cette fois ».
@@ -101,6 +109,7 @@ négociable, et aucune ne se contourne « juste cette fois ».
 ---
 
 ## 3. La marque
+<!-- ccf:acces founder -->
 
 ### 3.1 Le symbole
 
@@ -167,6 +176,7 @@ formats réseaux ; dérivés optimisés des portraits d'équipe (1,2 à 2,1 Mo p
 ---
 
 ## 4. Le système visuel
+<!-- ccf:acces founder -->
 
 ### 4.1 Où vit le CSS
 
@@ -283,6 +293,7 @@ le voisinage de la page que tu touches, pas sur les jetons historiques.
 ---
 
 ## 5. Les composants signature
+<!-- ccf:acces founder -->
 
 ### 5.1 Le kicker au phare — le composant identitaire
 
@@ -348,6 +359,7 @@ révélations au défilement — tous décrits dans le skill `esthetique-ccf`.
 ---
 
 ## 6. Rédaction
+<!-- ccf:acces founder -->
 
 ### 6.1 Les trois lois
 
@@ -440,6 +452,7 @@ PDF (`docs/analyses/…`) et l'artifact — sinon ils divergent.
 ---
 
 ## 7. Les quinze invariants des livrables
+<!-- ccf:acces founder -->
 
 Valables pour le site, les PDF, l'infolettre, les courriels, les cartes sociales et Bluesky.
 
@@ -471,6 +484,7 @@ Valables pour le site, les PDF, l'infolettre, les courriels, les cartes sociales
 ---
 
 ## 8. La note d'analyse — le gabarit de référence
+<!-- ccf:acces founder -->
 
 La note pilote (feux de forêt, juillet 2026) est le **modèle à généraliser**. Elle existe en quatre
 artefacts : PDF une page et page web longue, chacun en français et en anglais.
@@ -533,6 +547,7 @@ visualisation : jamais deux fois la même dans une note.
 ---
 
 ## 9. Pièges vérifiés (ne pas les redécouvrir)
+<!-- ccf:acces founder -->
 
 - **Cache CSS** : modifier un CSS sans bumper `?v=` ne change rien chez le visiteur.
 - **Overlays** : un `transform` figé par une animation `forwards` casse `position:fixed` — les
@@ -551,6 +566,7 @@ visualisation : jamais deux fois la même dans une note.
 ---
 
 ## 10. Tenir ce canon à jour
+<!-- ccf:acces founder -->
 
 1. **Quand le code change, ce fichier change dans le même commit.** Une valeur citée ici doit
    rester trouvable à l'adresse indiquée.
