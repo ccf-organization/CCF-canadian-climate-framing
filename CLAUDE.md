@@ -9,7 +9,7 @@
 > Il vaut pour le site, l'observatoire, les notes d'analyse, l'infolettre, les courriels, les
 > cartes sociales, les publications Bluesky et le papier scientifique.
 >
-> **Version du canon : 1.0 — 2026-08-30.** Établi par audit du code réel (8 agents, 757 faits
+> **Version du canon : 1.1 — 2026-08-31.** Établi par audit du code réel (8 agents, 757 faits
 > vérifiés). Chaque valeur porte son adresse : si le code a changé, **le code gagne** — corrige
 > alors ce fichier dans la foulée.
 
@@ -105,6 +105,15 @@ négociable, et aucune ne se contourne « juste cette fois ».
 9. **Langues écrites en toutes lettres** partout dans l'interface publiée.
 10. **Ne jamais réintroduire** les positions par rôle et les sous-parties « Ce qu'ils contestent /
     défendent / Ce qu'on leur reproche » : supprimées du produit science sur demande explicite.
+11. **Les noms des fournisseurs d'archives de presse (Eureka, Factiva, ProQuest) ne s'écrivent sur
+    AUCUNE surface publique** — site, PDF, infolettre, courriels, réseaux, dépôts publics. On écrit
+    « nos bases d'archives de presse » (demande du 31-08 : « on ne doit JAMAIS parler d'eureka
+    factiva ou proquest. Ne l'écrit nul part »). Ils restent nommables dans le code privé et les
+    panneaux admin.
+12. **« pipeline » et « échelle » sont bannis de toutes les surfaces publiées**, dans les deux
+    langues (demande du 31-08). On écrit « chaîne de traitement » / « la chaîne » en français,
+    « processing chain » / « the chain » en anglais ; « à l'échelle de » se remplace par « sur »,
+    « sur l'ensemble de ». Le mot pipeline reste permis dans le code et les noms de fichiers.
 
 ---
 
@@ -184,7 +193,9 @@ Deux feuilles sur **toutes** les pages, dans cet ordre : `static/css/main.css` (
 source canonique) puis `atlas-shell.css` (la coquille du registre récent). Toute autre feuille est
 ajoutée par sa page via `extra_css` : `home-concepts.css` (accueil publié, variante
 `research-refined`), `about-atlas.css`, `team-atlas.css`, `contact-atlas.css`,
-`database-atlas.css`, `services-newsletter.css`, `observatory-atlas.css`, `obs-rail.css`.
+`database-atlas.css`, `services-newsletter.css`, `observatory-atlas.css`, `obs-rail.css` ;
+Base et méthode charge en dernier `database-canon.css` (le jeu de composants `dbx`, il
+« ferme la marche » sur les deux feuilles précédentes).
 
 **Le rail de l'observatoire a une source unique déclarée** : `obs-rail.css`. Ne le restyle nulle
 part ailleurs.
@@ -292,6 +303,281 @@ le voisinage de la page que tu touches, pas sur les jetons historiques.
 
 ---
 
+## 4bis. Les courriels — le registre Atlas
+<!-- ccf:acces founder -->
+
+**Un courriel CCF est bâti comme une page du site : des pavés verts qui ouvrent, du texte clair
+entre eux, et le pied Atlas pour fermer.** L'enveloppe partagée vit dans
+`data-server/email_service.py` (`email_wrap` et ses briques `_manchette`, `_tete`, `_p`, `_etapes`,
+`_valeur`, `_note`, `_signature`) ; `extraction/mcp_mail.py` en est le gabarit d'application. Une
+lettre qui ouvre sur du blanc, ou qui empile des cartes arrondies, n'est pas de ce produit.
+
+### 4bis.1 Le pavé de manchette
+Fond `#12362d`, **aligné à gauche** et **encastré dans la gouttière** de 34 px — sur le site aucun
+pavé n'est à bord perdu, ils font tous `width:min(1200px, calc(100% - 48px))`. Rayon 0, aucune
+ombre, aucun dégradé : le halo `radial-gradient` du héros ne survit pas à Outlook, et un
+`background-image` en échec laisse un fond blanc. Il porte, dans cet ordre : le **mât** (médaillon
+40 px et kicker `#9bd2c1` en capitales lettrées `.22em` sur la même ligne, grammaire `.dbh__mast`),
+le **titre** en serif 27 px blanc dont **un seul mot passe en menthe `#a6dac9`**, la **ligne
+d'édition** en capitales `#8faea3`, le **bouton**, et un **filet de clôture** `#81b1a2` en bas à
+droite sur 34 % de la largeur (signature `.dbh::after`).
+
+### 4bis.2 L'en-tête de section — sur fond vert, avec son symbole
+**Chaque section s'ouvre sur son propre pavé vert**, réduction du pavé de chapitre `.dbh`
+(`database-page.css` l. 3190) : fond `#12362d`, padding `22px 26px 20px`, kicker `#9bd2c1` en
+capitales lettrées `.15em` **précédé de son symbole**, titre serif 21 px blanc, lede `#bed0c9` en
+serif 14 px, et le même filet de clôture à 34 %.
+
+Le **symbole** vient du rail de l'observatoire, qui donne à chaque vue le sien : ◧ vue d'ensemble ·
+❖ le Journal · 〜 le pouls · ◈ à travers le pays · ⇲ cascades · ▤ articles · ▥ cadres · ◐ émotions ·
+▧ par média · ✎ méthode. Une section sans vue correspondante prend **✦**. Le phare vectoriel du
+kicker (`.ccf-lh`) ne se transpose pas : un SVG inline ne survit pas à Gmail, et le canon §7.5 admet
+le glyphe de vue ou ✦ comme marqueur de tête.
+
+### 4bis.3 Le pied — celui du site
+`.footer--atlas` (`atlas-shell.css` l. 447) : fond `#0b2922`, **filet menthe `#a6dac9` de 1 px en
+tête**, la marque à gauche (médaillon 52 px, nom en serif blanc, baseline `#8faea3`), les liens en
+**pavés bordés** `#23413a` à rayon 3 px, et le **dernier pavé pleine largeur sur fond menthe**
+`#a6dac9`, encre `#12352c` en gras — c'est lui, le bouton du pied. Puis la note d'usage loyal
+(`#79988d`), la signature de l'équipe et le millésime, séparés par des filets `#203e37`.
+
+**La signature est celle de l'observatoire** : « L'équipe de l'observatoire CCF » / « The CCF
+observatory team ». Le Journal du climat est une vue de l'observatoire, et sa signature appartient
+à l'infolettre seule. Voir l'invariant nº 10.
+
+### 4bis.4 Le bouton
+Un seul par lettre, dans le pavé de manchette. Sur fond sombre il est **menthe** : fond `#a6dac9`,
+encre `#12352c`, bord `1px solid #8abfad`, rayon 4 px, libellé sans 700 suivi de ✦. C'est la recette
+du dernier lien du pied Atlas et du bouton d'abonnement du Journal. Le bouton de verre `.btn-lh` ne
+se transpose pas : `backdrop-filter` n'existe pas en messagerie.
+
+### 4bis.5 Le corps clair, entre les pavés
+Repris des notes d'analyse : prose en **serif** 15 px interligne 1,75 `#24382e` ; encadré `#f2f7f3`
+sur filet `#c9d9cc`, rayon 4 px, **réservé aux valeurs à recopier** ; note et mise en garde sous un
+filet fin `#cfdccf`, en `#5c7166` ou en braise `#b0492f` ; étapes numérotées en rangées séparées d'un
+filet, numéro en serif `#0a5c4a` — **la menthe tombe à 1,56:1 sur blanc et y devient illisible** ;
+listes et échelles à plat, l'élément actif distingué par son kicker et son encre, jamais par un
+aplat.
+
+### 4bis.6 Les contraintes de messagerie qui expliquent le reste
+· **Aucune police web ne se charge** — Gmail, Outlook et Yahoo retirent le `<link>` du `<head>`.
+Écrire « Lora » ou « Archivo » dans un style en ligne est un défaut : on écrit les replis que le
+canon §4.5 nomme, soit Georgia pour le display et la prose, Arial pour la sans.
+· **Le fond des pavés est posé deux fois**, en propriété CSS **et** en attribut `bgcolor`, sans quoi
+le mode sombre de Gmail repeint le fond et laisse un texte clair sur clair.
+· **Les `rgba` sont aplatis**, qu'Outlook rend mal au-dessus d'un `bgcolor`. Sur `#12362d` : `.75`
+donne `#81b1a2`, `.28` donne `#3b6459`, `.18` donne `#2d5449`. Sur `#0b2922` : `.15` donne `#23413a`,
+`.13` donne `#203e37`.
+· **Outlook réinitialise la police à chaque cellule**, ignore `display:flex` et `linear-gradient`.
+Tout est en tables imbriquées, en aplats et en styles incorporés ; les classes de la feuille ne
+servent que de repli aux gabarits pas encore migrés.
+
+### 4bis.7 Le phare dans chaque en-tête
+Chaque pavé de section porte le **médaillon du phare en 26 px**, aligné à droite, en vis-à-vis du
+kicker. Le canon §5.1 veut le phare en tête de kicker ; en courriel il ne peut pas y être en SVG, et
+une image de 13 px collée au texte se lit comme une puce sale. Il occupe donc la place que le
+filigrane occupe sur les cartes du site (`.abt-mission__wm`) : la section porte la marque sans que
+le kicker s'alourdisse.
+
+### 4bis.8 Les liens — une seule couleur, et jamais d'adresse nue
+**Une couleur de lien, la même partout** : le vert d'action `#0a5c4a` sur fond clair (7,95:1 sur
+blanc), la menthe `#a6dac9` sur fond sombre (8,48:1 sur `#12362d`). Aucune couleur claire sur fond
+clair, aucun bleu.
+
+**Aucune adresse ne reste en texte nu.** Une URL ou une adresse de courriel posée hors d'une balise
+`<a>` est détectée par Gmail, Apple Mail et Outlook, qui la repeignent de LEUR bleu — une couleur
+qui n'est dans aucune palette de la maison. Toute adresse est donc enveloppée dans un `<a>` portant
+sa couleur, et l'enveloppe pose la garde `<meta name="format-detection" content="telephone=no,
+date=no,address=no,email=no">` plus la règle `a[x-apple-data-detectors]{color:inherit!important;…}`,
+qu'iOS applique là où il ignore la balise. Une valeur qui n'est ni une URL ni une adresse (un
+identifiant, un jeton, un mot de passe) reste du texte, mais reçoit sa couleur explicitement.
+
+**Chaque mention du guide porte son lien.** Quand une lettre renvoie au guide de branchement, elle
+donne l'adresse cliquable au même endroit, pas seulement dans le bouton de la manchette : un lecteur
+qui parcourt la lettre par le milieu ne remonte pas au bouton.
+
+### 4bis.9 Toute lettre part en deux parts
+Le message est un `multipart/alternative` qui porte une part **texte** puis la part HTML, dans cet
+ordre — le client retient la dernière qu'il sait rendre. La part texte se **dérive** du HTML
+(`email_service.html_to_text`) plutôt que de s'écrire à part : deux rédactions divergeraient au
+premier changement. Une lettre sans part texte n'a rien à montrer à un client en mode texte, et son
+absence pèse dans les scores anti-pourriel.
+
+### 4bis.10 Les listes ont deux niveaux
+Une liste dont un item **annonce** ce qui suit — il se termine par deux-points, « Tout ce qu'Expert
+permet, plus : » — met les items suivants **au second niveau** : en retrait, sous un tiret demi-cadratin
+`–` en encre secondaire, et non sous la même ✦ que l'annonce. Les mettre au même rang fait lire
+« tout ce qu'Expert permet » et « les points d'entrée d'administration » comme deux éléments
+comparables, alors que le second est un exemple du premier. La brique `_dots` le détecte seule.
+
+### 4bis.11 Le mode sombre des clients
+Outlook et Gmail n'obéissent pas à `color-scheme:light` : ils **inversent** eux-mêmes ce qu'ils
+jugent clair. On pilote donc l'inversion au lieu de la subir, par trois familles de sélecteurs,
+parce qu'aucun client ne lit les mêmes : `@media (prefers-color-scheme: dark)` pour Apple Mail,
+Gmail iOS et Thunderbird ; `[data-ogsc]` et `[data-ogsb]` pour Outlook mobile, qui réécrit le
+document en préfixant ces attributs ; et les fonds posés en `bgcolor` sur les pavés, qu'aucun client
+ne repeint — c'est pour cela que le vert des pavés survit partout.
+
+**Le piège mesuré :** un fond de carte sombre trop clair fait DISPARAÎTRE les pavés. `#1a2124`
+contre le vert `#12362d` ne donne que 1,24:1, et la lettre perd sa structure. La carte descend donc
+à `#0d1113` (1,44:1) et le pavé reçoit en plus un filet `#2c5548`, comme sur le site. Les liens du
+corps passent du vert d'action à la menthe, qui tient 9,3:1 sur ce fond.
+
+**Les images portent leur description.** Une image en `alt=""` réserve sa place, et Outlook y dessine
+un cadre vide quand il bloque le chargement — le phare des en-têtes apparaissait comme un carré blanc.
+Chaque image porte son mot, sa cellule reprend le fond du pavé pour que le cadre s'y fonde, et le
+style éteint bordure et soulignement.
+
+**La marque GitHub** accompagne tout lien de dépôt, en **pastille** : la marque blanche sur un disque
+plein du vert d'action (`github_mark_pastille.png`, 7,95:1). Elle a d'abord existé en deux tirages,
+un d'encre et un blanc ; aucun ne tient dans un courriel, puisque le client décide lui-même du fond
+et qu'Outlook en mode sombre effaçait le tirage d'encre. Le disque porte son propre contraste, quel
+que soit ce qu'il y a derrière. Elle se pose **en table à deux cellules**, jamais en image inline :
+Outlook pour Windows compose avec le moteur de Word, qui ignore `vertical-align` en pixels, et les
+dimensions s'écrivent en attributs autant qu'en style.
+
+**La lettre prend toute la largeur.** Pas de carte de 620 px posée sur une toile : deux fonds
+empilés font flotter le message au milieu de sa fenêtre. Le papier de la lettre EST le fond du
+message, et les pavés verts vont d'un bord à l'autre de la gouttière.
+
+**Les dépôts vivent sous l'organisation** `github.com/ccf-organization` — les cinq y ont été
+transférés le 31-08-2026, et les anciennes adresses `antoinelemor/…` ne font plus que rediriger.
+Attention en cherchant : une URL coupée par la concaténation implicite de Python échappe à un
+remplacement littéral, et `antoinelemor.github.io` est le site personnel, qui ne se touche pas.
+
+### 4bis.12 L'indicateur — une piste, un segment, un chiffre
+Un score sur 100 s'affiche par une **piste fine à l'encre pâle**, le **segment atteint** en couleur
+pleine, et la **valeur en chiffres** à droite. C'est le langage des figures des notes d'analyse
+(`.btrack` / `.bseg` / `.bvals`), et il ne coûte **aucune image** : deux cellules de table peintes,
+que tous les clients savent rendre. La sémantique des teintes ne bouge pas (§4.3) : la forêt dit la
+présence et l'influence, la braise dit la contestation et le recul. Un score non nul garde un
+segment d'au moins 2 % — « presque rien » n'est pas « rien ».
+
+Ce qu'il remplace : dix images de phare par indicateur, n allumées sur dix. Elles disparaissaient
+entièrement dès qu'un client bloquait les images, elles demandaient de compter, et leur pas de dix
+points écrasait l'écart entre 31 et 39. Quarante requêtes HTTP pour un podium.
+
+**Les chiffres ont leur police.** Le canon §4.5 réserve `--font-mono` (Space Grotesk, qui n'est pas
+une chasse fixe) aux dates, compteurs, axes et données tabulaires. En courriel on écrit son repli,
+`'Space Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif`, avec `font-variant-numeric:
+tabular-nums` pour que les colonnes de chiffres s'alignent d'une ligne à l'autre. Un compteur n'est
+ni un titre (Georgia) ni un jeton : la chasse fixe reste aux **codes et aux clés**, où il faut
+distinguer 0 de O.
+
+### 4bis.13 Les blocs de contenu
+Les briques qui portent le contenu suivent les mêmes règles que le squelette.
+
+**L'étiquette d'un bloc est un kicker**, donc elle porte son marqueur : ✦ par défaut, ou le glyphe
+de sa vue. Une ligne de capitales sans marqueur n'est pas un kicker (invariant nº 5).
+
+**Le pour-cent prend son espace insécable en français**, et le libellé d'un cadre prend la couleur
+de son cadre : c'est l'information, pas la légende.
+
+**Les noms comptés s'accordent.** « 1 article · 1 média », jamais « 1 articles · 1 médias ». Quand
+le nombre vient d'un texte produit par un modèle, la consigne d'accord se pose **dans le prompt** :
+le gabarit ne peut pas corriger une phrase qu'il n'écrit pas.
+
+**Une phrase commence par une capitale**, y compris un sous-titre de section de trois mots.
+
+**Le bouton d'un bloc** est l'aplat plein du registre (§4bis.4), jamais une pilule à filet pâle et
+rayon 999 px, qui a la forme d'un bandeau de consentement. Un médaillon de 13 px devant son libellé
+ne se lit pas et laisse un cadre vide quand les images sont bloquées : ✦ le remplace.
+
+**Le piège des chaînes échappées** (canon §9) : une chaîne qui traverse `esc()` voit son `&`
+réécrit, et l'entité `&nbsp;` s'y affiche alors en toutes lettres. Dans ces chaînes — libellés,
+titres, contenus — l'insécable s'écrit **en caractère** (U+00A0) ; l'entité reste la règle dans le
+HTML construit à la main, qui ne passe jamais par `esc()`. Le contrôle se fait sur le rendu, en
+cherchant `&amp;nbsp;`.
+
+**La matière d'un prompt peut être dans une autre langue que la lettre.** Quand les faits fournis au
+modèle sont en anglais et la sortie en français, la consigne doit interdire explicitement de
+recopier un fragment de la matière : sans cela « lean toward contesting » traverse jusqu'au lecteur.
+
+### 4bis.14 Les encarts et les listes d'acteurs
+**Une liste d'acteurs est une suite de RANGÉES, pas une grille de cartes.** Six cartes bordées
+empilées font un tableau de bord ; le site aligne des rangées d'index (`.svc-idx`) séparées d'un
+filet fin, et c'est ce qui donne à une liste son allure de page. Le rang s'écrit en **filigrane** —
+un chiffre serif de 30 px à l'encre pâle `#c9d9cc`, dans sa propre colonne — jamais en pastille
+ronde pleine collée au nom. Le nom de l'acteur est un titre, donc en serif.
+
+**Une lettre n'a qu'une façon de présenter un acteur.** Podium, voix par rôle, classement : la même
+rangée partout.
+
+**L'encart de résumé est celui des notes d'analyse** (`.anz-story`) : fond `#f2f7f3`, filet
+`#c9d9cc`, rayon 5 px, prose en serif, et son **kicker À L'INTÉRIEUR** du bloc, en capitales
+espacées vertes précédées de ✦. Un intitulé posé dehors, en gris de méta, fait lire une étiquette
+puis une boîte au lieu d'un bloc. La variante d'alerte teinte en braise (`#fbf3ef` sur `#e2c9bd`).
+
+**Un badge de source suit le canon §5.4** : filet fin, petit rayon, teintes de la maison. Le bleu
+`#46587a` et sa pilule à rayon 99 px n'appartiennent à aucune palette CCF.
+
+### 4bis.15 La prose et les chiffres
+La section 6 s'applique sans aménagement, et l'audit par regex (§6.6) se fait sur le courriel
+**rendu**, tous les cas joués : chaque palier, chaque langue, compte neuf et compte existant. Les
+chiffres viennent de `email_service.corpus_stats()`, qui lit `annotation_rollup` ; son repli figé ne
+doit jamais être ce qui part chez le destinataire.
+
+**Le guide se lit dans les deux langues.** La page de branchement vit à deux adresses,
+`/account/connect` et `/fr/compte/brancher` ; chacune porte dans sa barre du haut un lien vers
+l'autre, au même gabarit et à la même hauteur que les autres boutons, avec le nom de la langue
+**en toutes lettres** (interdit nº 9) et les attributs `lang` et `hreflang`. Un lecteur arrivé par
+le courriel anglais doit pouvoir passer au français sans repartir de l'accueil.
+
+**Aucune plateforme n'est mise en avant.** Le serveur MCP se raccorde à sept applications, que la
+page de branchement traite à égalité : Claude, ChatGPT, Le Chat et Gemini pour la conversation,
+Claude Code, Cursor et VS Code pour le développement. Un courriel qui décrit les gestes « dans
+Claude » et renvoie les autres à un « suivent la même logique » choisit pour le lecteur. Les étapes
+s'écrivent donc au vocabulaire commun — réglages, connecteurs, connecteur personnalisé, adresse —
+et la lettre nomme les plateformes ensemble, jamais l'une devant les autres. Cela vaut pour toute
+surface publiée, pas seulement les courriels.
+
+**Le contenu dit d'abord ce qu'il n'y a pas à faire.** Depuis OAuth 2.1 (`sql/mcp_oauth.sql`,
+`mcp-server/ccfmcp/oauth.py`), un connecteur web se raccorde AVEC LE COMPTE : l'écran de consentement
+demande l'identifiant, le mot de passe et le code à six chiffres, jamais le jeton. Une lettre d'accès
+ouvre donc sur « aucun jeton à manipuler », donne les quatre gestes de la page de branchement
+(`data-server/templates/connect.html`, constantes `ETAPES`, `CONNEXION`, `ESSAI`) **mot pour mot**,
+et ne place le jeton qu'en avant-dernier, pour le terminal et les éditeurs. Le mot « OAuth »
+n'apparaît nulle part : la page ne l'écrit jamais.
+
+---
+
+## 4ter. Les documents — la flotte imprimée
+<!-- ccf:acces founder -->
+**Tout ce qui se produit sous notre nom hors articles scientifiques passe par la flotte de
+`documents/`, et la règle en est `documents/CHARTE.md`.** Fiches, notes sur commande, guides,
+rapports, demandes de financement, ententes, communiqués : dix-huit gabarits rangés en cinq
+familles, déclarés dans `documents/catalogue.py`, composés par `documents/build.py`.
+
+**Deux chaînes, et le choix ne se discute pas au cas par cas.** La chaîne LaTeX
+(`documents/latex/ccfdoc.cls`, XeLaTeX) produit ce que nous **diffusons** : personne d'autre que
+nous n'y écrit, le rendu est fidèle et reproductible hors ligne. La chaîne Word
+(`documents/word/ccf-reference.docx`) produit ce que nous **co-rédigeons** : un bailleur impose
+son formulaire, une collègue révise dans son traitement de texte. Un manuscrit circule en Word et
+sort en PDF LaTeX ; le Word n'est jamais le livrable final d'une pièce diffusée sous notre nom.
+
+**La note d'analyse bimensuelle garde sa chaîne** (HTML puis Chrome, `docs/analyses/…/build_pdf.py`,
+gabarit du §8) : son égaliseur de colonnes et son ajustement une-page sont calibrés au centième.
+
+Ce que la flotte a ajouté au dossier de marque, parce que les documents en avaient besoin :
+`ccf_paysage_ondark_{fr,en}.svg` et `ccf_icone_ondark.svg` — le lock-up et le médaillon en
+**knockout pour fond vert** (mot-symbole `#F5F7F8`, contour et baseline menthe, filet ambre
+conservé), qui comblent le manque signalé au §3.5 ; et `ccf_lh_{vert,menthe,braise}.svg`, le phare
+du kicker gelé pour l'imprimé, faisceaux à l'opacité `.45` que `main.css` leur donne sous
+`prefers-reduced-motion`. Les documents parlent le vert Atlas `#12362d`, pas le bleu nuit de la
+bannière, dont le fond est cuit dans le fichier et ferait tache sur un bandeau vert.
+
+**Trois pièges vérifiés, qui ne se redécouvrent pas :** les quatre familles de polices sont
+**vendorées** sous OFL dans `documents/polices/` et chargées par chemin, sans installation —
+la chaîne HTML de la note, elle, charge Google Fonts au rendu et produit un PDF hors charte sans
+erreur si le réseau manque. Les logos sont **gelés** en PDF vectoriel dans `documents/marque/`,
+avec Avenir Next embarqué en sous-ensemble : régénérés sur une machine sans cette police, ils
+sortiraient hors charte en silence. Et **✦ n'existe dans aucune des quatre familles** (ni ◧ ❖ 〜 ◈
+⇲ ▤ ▥ ◐ ▧ ✎) : sur le web le navigateur retombe sur une police système, en LaTeX le glyphe sort
+blanc — la classe les route vers DejaVu Sans. Aucune formule mathématique, pas même `$\cdot$` :
+une seule fait entrer Computer Modern dans le PDF.
+
+---
+
 ## 5. Les composants signature
 <!-- ccf:acces founder -->
 
@@ -356,6 +642,41 @@ Héros à maille, rangées d'index numérotées, vignette-document (mini-page es
 tailles `lg`/`xs`/`plain`, registre dupliqué dans `newsletter.py`), loader de page, kit de
 révélations au défilement — tous décrits dans le skill `esthetique-ccf`.
 
+### 5.6 Base et méthode — le registre `dbx` (database-canon.css, 31-08)
+
+Sept briques, et rien d'autre : `.dbh` (pavé de chapitre), `.dbx-lead` (chapô), `.dbx-idx`
+(séquence numérotée), `.dbx-grid` (grille à filets), `.dbx-note` (encadré), `.dbx-desk`
+(pupitre de démonstration), `.dbx-fig` (figure). Règles posées par retours d'Antoine :
+
+- **Le pavé** : le médaillon animé (68 px) et le kicker « Chapitre n » partagent UNE ligne,
+  centrés verticalement l'un sur l'autre (`.dbh__mast`, db_hero.html).
+- **Au-dessus de 940 px, la pile devient une rangée** — jamais une colonne ferrée à gauche qui
+  laisse la moitié droite vide : les `.dbx-idx__r` en grille numéro · titre+méta · description ·
+  ✦ (géométrie des rangées d'index de Services) ; les `.dbx-note` à titre en deux colonnes
+  titre-au-phare | prose, `width:fit-content`, marge droite habitée par un ✦ filigrane ; les
+  `.dbx-lead` à lede en deux colonnes, la dernière ligne du lede posée sur celle du titre.
+- **La frise des chapitres** (db_trail.html) : six pastilles toujours visibles, états
+  parcouru ✓ / courant / à venir ; **le cap suivant** (`.dbnext`, db_next_fab.html) : pilule
+  SOMBRE du dock de bord (fond `rgba(18,54,45,.94)`, filet menthe — jamais le vert d'action
+  clair), reparentée dans `#ccfEdgeActions` pour qu'aucun ancêtre transformé ne piège son
+  `position:fixed` ; à droite du beacon, à sa hauteur, elle mène d'étape en étape puis à
+  l'observatoire. Les encarts composés se centrent horizontalement (`margin-inline:auto`).
+- **Le tableau des sources** (db_view_sources.html) : rendu serveur, sous-sections conservées
+  (nationaux, régionaux par langue) et **chaque sous-section rangée par volume croissant** ;
+  la scène — tri, cascade des rangées, remplissage des jauges — ne se joue qu'à l'ENTRÉE du
+  tableau dans le cadre, sinon le visiteur n'en voit jamais le mouvement ; rangée entière
+  cliquable vers la fiche média, en-têtes de colonnes triables (`aria-sort` tenu).
+- **Les panneaux** (dimensions et lectures) : en-tête CENTRÉ — kicker, titre, sous-titre et
+  aide au clic —, et une navigation de retour qui NOMME sa destination (« Revenir aux six
+  dimensions » / « Revenir aux quatre lectures »), en tête ET en pied, à l'aplomb du bord de
+  la carte. Piège : une règle générique de `database-page.css` force `text-align:left` et
+  `max-width:26ch` sur `.dmp__title` et `.category-section__title` — il faut la contrer
+  explicitement dans le panneau.
+- **Les grilles ouvrent sur un chapô, jamais un kicker orphelin** (`.dgx-lead` : kicker,
+  titre déclaratif, invitation), centré sur la grille qu'il annonce.
+- **Le papier technique** : l'encart `.dbx-paper` (kicker au phare, titre, lede, deux actions
+  `.dbx-btn` à droite) — jamais la vieille carte à boutons flottants.
+
 ---
 
 ## 6. Rédaction
@@ -379,6 +700,16 @@ une vérification par programme le confronte aux résultats.
 
 - **Le pivot par négation** : « ce n'est pas X, c'est Y », « it's not X, it's Y ». Dis ce que la
   chose **est** ; le contraste se porte par les chiffres, pas par la syntaxe.
+- **L'antithèse sous toutes ses formes**, et pas seulement le pivot par négation : « il y a un
+  prix et une raison », « ce choix se paie et s'assume », « d'un côté… de l'autre », « la
+  contrepartie… en échange ». Poser deux termes en balance est le réflexe le plus visible de la
+  prose générée. Écris la chose, puis la suivante, sans les mettre face à face.
+- **La coordination « , et »** : « Vous posez une question, et l'assistant répond », « Votre accès
+  est en lecture seule, et la base refuse toute écriture ». Ce patron enchaîne deux propositions
+  complètes par une virgule suivie de « et », et il revient à chaque paragraphe dès qu'on n'y prend
+  pas garde. Coupe en deux phrases, ou remplace par un point-virgule, un deux-points, ou rien.
+  Le « et » reste légitime **sans** virgule (« deux minutes et aucune ligne de commande ») et en
+  fin d'énumération (« le corpus, l'observatoire et le code »).
 - **La règle de trois systématique** (« précis, sobre et rigoureux ») : varie les groupements.
 - **Les parallélismes en miroir** de fin de section et les **chutes en aphorisme** (« X est le Y
   du Z »).
@@ -400,8 +731,33 @@ de noter », « en somme ». Copules : « constitue », « représente », « s'
 crucial, notably, seamless, holistic, nuanced, fostering, showcasing, testament to, serves as
 (→ is), features (→ has).
 
+*Les deux langues* (interdit absolu nº 12) : « pipeline » (dire « chaîne de traitement » /
+« processing chain ») et « échelle » (« à l'échelle du corpus » se dit « sur le corpus entier »).
+
 ### 6.4 Contenu
 
+- **Les étapes méthodologiques accomplies se racontent au passé.** « Nos étapes méthodologiques
+  sont présentées ci-dessous dans l'ordre où elles ont été mises en œuvre » — jamais « dans
+  l'ordre où elles se produisent » quand elles ont déjà eu lieu. Le présent est réservé à ce qui
+  tourne réellement chaque jour (formulation d'Antoine, 31-08).
+- **Les titres de section disent la méthode, directement** : « Notre méthode, en bref » /
+  « Our method, in a nutshell », « Ce que notre méthode a produit, de 1978 à aujourd'hui ».
+  Registre possessif et descriptif ; jamais d'aphorisme (« Tout ce que l'observatoire sait, il
+  l'a appris des journalistes » : rejeté), jamais d'image (« Une même chaîne lit l'archive et
+  l'actualité du matin » : rejeté), jamais de pivot par négation ni de « : » à effet.
+- **L'extraction d'entités relève TROIS familles : personnes, organisations ET LIEUX.**
+  Toute énumération qui n'en cite que deux est fausse (31-08 : « il manque les lieux »).
+  Mesuré en base le 31-08-2026 : 2 201 586 personnes, 2 211 194 organisations,
+  2 543 476 lieux — les lieux sont la famille la plus nombreuse. Exception légitime : le
+  pouls médiatique ne classe au palmarès que les personnes et les organisations.
+- **Le nombre de catégories s'écrit « une soixantaine » en PROSE** (31-08 : « ailleurs on a
+  tendance à dire plus »), avec le nombre exact conservé dans les rangées de chiffres, les
+  kickers et les méta — c'est de la donnée. La formule reste dérivée : une garde Jinja
+  bascule sur la valeur exacte si `categories|length` sort de la fourchette 55-64.
+- **L'annotation manuelle a un fait établi** (31-08) : l'annotatrice experte Alizée{NB}Pillod a
+  annoté elle-même, à la main, les phrases d'entraînement ; une deuxième personne a ensuite codé
+  un échantillon à l'aveugle (accord inter-annotateurs). Aucune surface ne doit écrire que « les
+  membres du projet » ont annoté « sous sa direction ».
 - **Pas de méta-narration des évènements.** Quand des faits touchent des personnes (feux,
   évacuations), raconte **les faits** (« des communautés sont évacuées », « la Croix-Rouge est
   mobilisée »), jamais la fabrication du récit (« le récit s'organise autour de… »). Les mots
@@ -470,8 +826,11 @@ Valables pour le site, les PDF, l'infolettre, les courriels, les cartes sociales
    partout : `?entity=<nom canonique>&ekind=PER|ORG&ewin=week` (préfixe `/fr/observatory` en FR).
 9. **Chaque pièce déclare son type dès sa première ligne visible** (pastille d'édition, kicker
    « NOTE D'ANALYSE · Nº n · date », signature de fil).
-10. **Le pied porte l'équipe et le domaine** : « L'équipe du Journal du climat — Alizée Pillod ·
-    Antoine Lemor · Matthew Taylor », puis `ccf-project.ca`.
+10. **Le pied porte l'équipe et le domaine**, puis `ccf-project.ca`. La signature suit le
+    livrable : « L'équipe du **Journal du climat** » pour l'infolettre et les surfaces du Journal ;
+    « L'équipe de l'**observatoire CCF** » pour tout le reste — courriels d'accès et de compte,
+    surfaces du serveur de données. Le Journal est une vue de l'observatoire, pas l'inverse. Les
+    trois noms suivent toujours : Alizée Pillod · Antoine Lemor · Matthew Taylor.
 11. **Repli gracieux obligatoire** : aucun livrable ne casse sur une dépendance absente (la carte
     sociale retombe sur le cache puis sur le logo ; « le pouls ne casse jamais la lettre »).
 12. **Emojis interdits** dans la prose scientifique ; registre fermé toléré sur Bluesky seulement.
