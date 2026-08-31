@@ -105,11 +105,11 @@ négociable, et aucune ne se contourne « juste cette fois ».
 9. **Langues écrites en toutes lettres** partout dans l'interface publiée.
 10. **Ne jamais réintroduire** les positions par rôle et les sous-parties « Ce qu'ils contestent /
     défendent / Ce qu'on leur reproche » : supprimées du produit science sur demande explicite.
-11. **Les noms des fournisseurs d'archives de presse (Eureka, Factiva, ProQuest) ne s'écrivent sur
-    AUCUNE surface publique** — site, PDF, infolettre, courriels, réseaux, dépôts publics. On écrit
-    « nos bases d'archives de presse » (demande du 31-08 : « on ne doit JAMAIS parler d'eureka
-    factiva ou proquest. Ne l'écrit nul part »). Ils restent nommables dans le code privé et les
-    panneaux admin.
+11. **Les noms des fournisseurs d'archives de presse (Eureka, Factiva, ProQuest, RefMedia) ne
+    s'écrivent sur AUCUNE surface publique** — site, PDF, infolettre, courriels, réseaux, dépôts
+    publics. On écrit « nos bases d'archives de presse » (demande du 31-08 : « on ne doit JAMAIS
+    parler d'eureka factiva ou proquest. Ne l'écrit nul part » ; RefMedia rejoint la liste avec la
+    quatrième base, le 31-08). Ils restent nommables dans le code privé et les panneaux admin.
 12. **« pipeline » et « échelle » sont bannis de toutes les surfaces publiées**, dans les deux
     langues (demande du 31-08). On écrit « chaîne de traitement » / « la chaîne » en français,
     « processing chain » / « the chain » en anglais ; « à l'échelle de » se remplace par « sur »,
