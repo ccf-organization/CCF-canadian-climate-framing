@@ -41,15 +41,26 @@ selon son tier. Les règles de maison (interdits, marque, visuel, rédaction, ga
 sont réservées au tier **fondation** : ce sont celles qui engagent notre nom. En ajoutant une
 section, pose son marqueur ; sans marqueur, elle est traitée comme réservée.
 
+**Ce canon dit ce que la maison écrit ; deux autres fichiers disent le reste, et ils ne le
+répètent pas.** `documents/CHARTE.md` dit comment tout cela devient une page imprimée.
+`documents/GUIDE_AGENT.md` et sa rédaction anglaise `GUIDE_AGENT.en.md` disent comment un agent
+conversationnel MÈNE le travail avec un fondateur : quelle branche prendre selon la demande, quand
+un dépôt se justifie et quand il est du bruit, quand demander une précision plutôt que deviner,
+quand refuser. Le serveur MCP les sert au tier fondation sans qu'on les demande — l'abrégé du guide
+dans le champ `instructions` du protocole, le guide entier dans `ccf_briefing`, avant ce canon
+(`mcp-server/ccfmcp/guide.py`). Une règle qui vaut pour toutes les surfaces monte ici ; une règle
+de conduite d'entretien reste là-bas.
+
 ---
 
 ## 1. Identité
 <!-- ccf:acces tous -->
 
 **Ce qu'est CCF.** L'observatoire du cadrage médiatique climatique canadien : une base annotée
-(283 964 articles, 22 médias, 1978-2026, 9,9 M d'unités de deux phrases annotées par 128
-classifieurs), un site public (ccf-project.ca), un pipeline continu qui l'alimente, et un papier
-de méthode (Scientific Data). Le produit est **scientifique**, pas militant.
+(283 964 articles, 22 médias, 1978-2026, 9,9 M d'unités de deux phrases annotées sur une
+grille de **65 catégories** par 128 classifieurs), un site public (ccf-project.ca), une chaîne de traitement continue qui l'alimente,
+et un papier de méthode, publié dans Scientific Data (Nature Portfolio, 2026 ; DOI
+10.1038/s41597-026-08330-9). Le produit est **scientifique**, pas militant.
 
 **Pour qui on écrit.** Un partenaire exigeant : chercheur, ministère, ONG, journaliste. Il lit
 vite, connaît le sujet, et détecte immédiatement deux choses — l'imprécision et la prose générée.
@@ -268,7 +279,9 @@ Sans lui, chaque titre et badge reçoit son propre rectangle sombre (« effet pa
 
 ### 4.5 Typographie
 
-Quatre familles, une seule requête Google Fonts, `display=swap` :
+Quatre familles, **servies par nos serveurs** depuis le 25-09-2026 (`static/css/fonts.css` et
+`static/fonts/`, régénérés par `scripts/vendor_fonts.py`, licences OFL à côté), `display=swap` ;
+plus aucune requête vers Google Fonts (voir §9bis) :
 
 | Jeton | Famille | Rôle réel |
 |---|---|---|
@@ -545,17 +558,23 @@ n'apparaît nulle part : la page ne l'écrit jamais.
 <!-- ccf:acces founder -->
 **Tout ce qui se produit sous notre nom hors articles scientifiques passe par la flotte de
 `documents/`, et la règle en est `documents/CHARTE.md`.** Fiches, notes sur commande, guides,
-rapports, demandes de financement, ententes, communiqués : dix-huit gabarits rangés en cinq
+rapports, demandes de financement, ententes, communiqués : dix-neuf gabarits rangés en cinq
 familles, déclarés dans `documents/catalogue.py`, composés par `documents/build.py`.
 
 **Deux chaînes, et le choix ne se discute pas au cas par cas.** La chaîne LaTeX
 (`documents/latex/ccfdoc.cls`, XeLaTeX) produit ce que nous **diffusons** : personne d'autre que
 nous n'y écrit, le rendu est fidèle et reproductible hors ligne. La chaîne Word
-(`documents/word/ccf-reference.docx`) produit ce que nous **co-rédigeons** : un bailleur impose
-son formulaire, une collègue révise dans son traitement de texte. Un manuscrit circule en Word et
-sort en PDF LaTeX ; le Word n'est jamais le livrable final d'une pièce diffusée sous notre nom.
+(`documents/word/ccf-reference-{fr,en}.docx`, posés par `construire_reference.py`) produit ce que
+nous **co-rédigeons** : un bailleur impose son formulaire, une collègue révise dans son traitement
+de texte. Un manuscrit circule en Word et sort en PDF LaTeX ; le Word n'est jamais le livrable
+final d'une pièce diffusée sous notre nom. Les deux branches portent la même hiérarchie — parties,
+sections numérotées sur trois niveaux, annexes, sommaire ; côté Word les numéros viennent d'une
+liste liée au style (jamais tapés) et le sommaire est un champ que **F9** remplit, Word ne
+calculant aucun champ à l'ouverture d'un fichier écrit par programme. Les quatre formes ont leur
+gabarit vide dans les deux langues (`documents/word/gabarits/`), et ce que Word ne sait pas
+reproduire est écrit dans `documents/word/README.md`.
 
-**La note d'analyse bimensuelle garde sa chaîne** (HTML puis Chrome, `docs/analyses/…/build_pdf.py`,
+**La note d'analyse garde sa chaîne** (HTML puis Chrome, `docs/analyses/…/build_pdf.py`,
 gabarit du §8) : son égaliseur de colonnes et son ajustement une-page sont calibrés au centième.
 
 Ce que la flotte a ajouté au dossier de marque, parce que les documents en avaient besoin :
@@ -575,6 +594,18 @@ sortiraient hors charte en silence. Et **✦ n'existe dans aucune des quatre fam
 ⇲ ▤ ▥ ◐ ▧ ✎) : sur le web le navigateur retombe sur une police système, en LaTeX le glyphe sort
 blanc — la classe les route vers DejaVu Sans. Aucune formule mathématique, pas même `$\cdot$` :
 une seule fait entrer Computer Modern dans le PDF.
+
+**La flotte est branchée au serveur MCP au palier fondation** (31-08). L'outil `ccf_document`
+suit les trois temps de la charte : catalogue, fiche de commande, document. C'est le **premier outil
+qui a écrit** — `ccf_courriel` et `ccf_projet` écrivent aussi depuis —
+et `readOnlyHint` a donc cessé d'être une constante de la boucle d'enregistrement pour
+devenir le défaut du registre. `mcp-server/ccfmcp/documents.py` charge `catalogue.py` et `build.py`
+**par chemin**, les relit à chaud, et compose dans un fil dédié à une place — hors du fil
+d'écoulement de la file, qui est unique et sériel — sous une échéance dure de 45 s par passe. La
+restitution passe par un **lien** : un PDF en base64 dépasse le plafond de 145 000 caractères. Deux
+routes le servent, `/mcp/document/<ref>` par jeton porteur et `/account/documents/<ref>` par session
+membre ; les fondateurs retrouvent leurs pièces dans une section de leur espace membre. Table
+`mcp_documents` (`sql/mcp_documents.sql`), fichiers dans `var/mcp_documents/`, trente jours.
 
 ---
 
@@ -668,8 +699,9 @@ Sept briques, et rien d'autre : `.dbh` (pavé de chapitre), `.dbx-lead` (chapô)
   cliquable vers la fiche média, en-têtes de colonnes triables (`aria-sort` tenu).
 - **Les panneaux** (dimensions et lectures) : en-tête CENTRÉ — kicker, titre, sous-titre et
   aide au clic —, et une navigation de retour qui NOMME sa destination (« Revenir aux six
-  dimensions » / « Revenir aux quatre lectures »), en tête ET en pied, à l'aplomb du bord de
-  la carte. Piège : une règle générique de `database-page.css` force `text-align:left` et
+  dimensions » / « Revenir aux quatre lectures »), en tête ET en pied, **centrée elle aussi**
+  (ferrée à gauche jusqu'au 01-09 : seule à son bord sous un en-tête entièrement centré, elle
+  partait de son côté). Piège : une règle générique de `database-page.css` force `text-align:left` et
   `max-width:26ch` sur `.dmp__title` et `.category-section__title` — il faut la contrer
   explicitement dans le panneau.
 - **Les grilles ouvrent sur un chapô, jamais un kicker orphelin** (`.dgx-lead` : kicker,
@@ -750,10 +782,34 @@ crucial, notably, seamless, holistic, nuanced, fostering, showcasing, testament 
   Mesuré en base le 31-08-2026 : 2 201 586 personnes, 2 211 194 organisations,
   2 543 476 lieux — les lieux sont la famille la plus nombreuse. Exception légitime : le
   pouls médiatique ne classe au palmarès que les personnes et les organisations.
+- **La grille compte SOIXANTE-CINQ catégories, et rien d'autre ne fait autorité que le
+  codebook du dépôt** (`CCF-canadian-climate-framing/paper/CCF_Methodology/Publication/
+  code_package/CODEBOOK.md`, miroir de la table supplémentaire S3). C'est le nombre de
+  colonnes d'annotation de `CCF_processed_data`, le nombre de lignes de la table des paliers,
+  et le nombre que le papier écrit partout. `config.ANNOTATION_CATEGORIES` en dérive et se
+  sert à tout gabarit par le processeur de contexte de `app.py` : `categories|length` est la
+  SEULE façon d'écrire ce nombre sur une surface publiée.
+  *Corrigé le 20-09-2026 :* la liste en portait 59, soit 56 catégories réelles plus les trois
+  familles d'entités nommées qui n'en sont pas. Neuf catégories manquaient, dont tout le cadre
+  environnemental, que l'observatoire colorait pourtant déjà. Accueil et « à propos »
+  annonçaient « 65+ », l'accueil « 120+ modèles » pour 128.
+- **La reconnaissance d'entités n'est PAS une catégorie d'annotation.** Personnes,
+  organisations et lieux se comptent à part (`config.NER_FAMILIES`), comme le papier les
+  compte à part : « 65 catégories + NER ». Les additionner est l'erreur qui a produit le 59.
 - **Le nombre de catégories s'écrit « une soixantaine » en PROSE** (31-08 : « ailleurs on a
   tendance à dire plus »), avec le nombre exact conservé dans les rangées de chiffres, les
   kickers et les méta — c'est de la donnée. La formule reste dérivée : une garde Jinja
-  bascule sur la valeur exacte si `categories|length` sort de la fourchette 55-64.
+  bascule sur la valeur exacte si `categories|length` sort de la fourchette 55-69.
+- **Les valeurs publiées du papier et du dépôt vivent dans `config.CCF_PAPER`** et se servent
+  aux gabarits sous le nom `paper` : 128 classifieurs, paliers A/B/C (27/21/17), F1 macro
+  agrégé 0,866, moyenne par catégorie 0,773, AC1 de Gwet 0,894, kappa 0,596, alpha 0,698,
+  1 000 phrases d'étalon-or, 4 000 d'entraînement, version 2.1.0 du dépôt et ses DOI, et le
+  DOI de l'article publié (`paper.doi_paper`, Scientific Data, 2026) — **toute surface qui
+  cite le papier pointe ce DOI**, jamais le PDF de `static/assets/pdf/` ni le préprint
+  Research Square (publication du 24-09-2026).
+  **Ces chiffres décrivent le dépôt GELÉ** : les compteurs d'articles et d'unités du site
+  restent ceux de `obs`, lus en base et toujours plus élevés. Ne jamais substituer l'un à
+  l'autre.
 - **L'annotation manuelle a un fait établi** (31-08) : l'annotatrice experte Alizée{NB}Pillod a
   annoté elle-même, à la main, les phrases d'entraînement ; une deuxième personne a ensuite codé
   un échantillon à l'aveugle (accord inter-annotateurs). Aucune surface ne doit écrire que « les
@@ -822,8 +878,15 @@ Valables pour le site, les PDF, l'infolettre, les courriels, les cartes sociales
 6. **Couple typographique unique** : titres serif (Lora → Georgia en repli), corps sans (Archivo),
    prose longue Source Serif 4.
 7. **L'encadré est pâle + filet fin + petit rayon** (voir 5.4).
-8. **Toute entité qui a une fiche est hyperliée** vers l'observatoire, avec la même URL canonique
-   partout : `?entity=<nom canonique>&ekind=PER|ORG&ewin=week` (préfixe `/fr/observatory` en FR).
+8. **Toute entité qui a une fiche est hyperliée**, avec la même URL canonique partout :
+   `?entity=<nom canonique>&ekind=PER|ORG&ewin=week` (préfixe `/fr/observatory` en FR). C'est
+   l'adresse des surfaces publiées — vitrine, infolettre, notes, courriels — et de tout tableau
+   exporté, qu'un tableur doit savoir ouvrir. **L'explorateur, lui, ouvre la fiche chez lui** :
+   `Fiche.entity` (`data-server/explorer/js/fiche.js`) la compose dans le tiroir depuis
+   `/api/live/pulse-entity`, et toute vue qui nomme une personne ou une organisation pose les
+   attributs de `Fiche.entAttrs` — un seul point pour tout le produit. Un chercheur qui suit un
+   nom ne perd ni sa session, ni sa liste, ni ses filtres, et la fiche reste tenue par le palier
+   du compte (`analyst`) et par le caviardage des textes hors budget.
 9. **Chaque pièce déclare son type dès sa première ligne visible** (pastille d'édition, kicker
    « NOTE D'ANALYSE · Nº n · date », signature de fil).
 10. **Le pied porte l'équipe et le domaine**, puis `ccf-project.ca`. La signature suit le
@@ -916,11 +979,99 @@ visualisation : jamais deux fois la même dans une note.
   et apostrophes typographiques défont les `str.replace` naïfs.
 - **Vues matérialisées** : un article annoté mais absent d'`article_frame_profiles` signifie une
   matview en retard — `REFRESH ... CONCURRENTLY`.
+- **La clef d'évènement est une clef de CONTENU** (sha1 des cinq plus petits `doc_id`,
+  `data-server/extraction/events_pipeline.py`) : une recomposition du cluster la change, et le
+  pipeline re-clé alors les artefacts par recouvrement (liste des tables du « report par
+  recouvrement »). Toute mémoire clée sur `event_key` doit figurer dans cette liste ET porter
+  son jeu d'articles — `journal_daily_pick.doc_ids`, `live_data._same_story` (même histoire si
+  la moitié du plus petit jeu est partagée). Sans cela l'anti-répétition ne reconnaît plus une
+  histoire : le 22-09, l'UE-Canada avait fait la une cinq fois en six jours sous trois clefs.
 - **Nommage des acteurs** : les live-blogs donnent N titres pour une histoire (tronquer au premier
   `:` ou `;`) ; ECCC existe en trois graphies à agréger avant toute conclusion.
+- **Une scène animée se RÉDUIT sur téléphone, elle ne se recompose pas.** Les schémas de
+  base et méthode (`.dmp-stage`) placent leurs pièces en absolu et tracent leurs trajectoires
+  dans un `viewBox` : les repasser en grille sous 640 px cassait le positionnement, et les
+  flèches disparaissaient avec la chorégraphie. La scène garde sa composition de conception
+  (880 × 320) et reçoit un `transform: scale()` calculé — classe `is-fit`, variables `--fit`,
+  `--fit-w`, `--fit-h`. Deux pièges tenus : une scène en panneau fermé mesure 0 (un rapport nul
+  l'écraserait), et l'observateur de taille se pose sur le PARENT, jamais sur la scène dont on
+  fixe la hauteur — sans quoi il boucle et le navigateur coupe ses notifications.
 - **✦ n'est pas un emoji** (U+2726) : faux positif classique des audits.
 - **Deux systèmes chromatiques coexistent** : la marque est bleu nuit + or, le site est forêt +
   teal + menthe. Le logo n'a jamais été reteinté ; ne « corrige » pas cela sans décision.
+
+---
+
+## 9bis. Confidentialité et conformité
+<!-- ccf:acces founder -->
+**La politique de confidentialité est une promesse que le code tient.** Elle vit à `/privacy` et
+`/fr/confidentialite` (`templates/privacy.html`, `templates/fr/privacy.html`), versionnée dans
+`config.CCF_IDENTITE` (version, date, responsable, adresse postale). Toute nouvelle collecte, tout
+nouveau fournisseur, toute nouvelle durée se reporte dans les deux rédactions, avec un changement de
+version annoncé (Loi 25, art. 8.2). Le dossier interne est `docs/conformite/` (registre des
+incidents, évaluations des facteurs relatifs à la vie privée, délégation du responsable).
+
+**Le site public ne pose aucun témoin et ne contacte aucun tiers.** C'est ce qui le dispense d'un
+bandeau de consentement ; une seule exception le ferait perdre. Polices, ECharts et D3 sont servis
+d'ici (`static/fonts/`, `static/vendor/`, liés par symlinks dans `data-server/static/` et
+`data-server/explorer/`) ; les portraits Wikimedia passent par `/api/portrait` (`portraits.py`,
+`live_data` réécrit leurs adresses) parce que Wikimedia pose des témoins tiers. Seules les vignettes
+d'articles restent chargées chez les médias (droit d'auteur : nous n'en gardons pas de copie pour le
+site), et la politique le dit. **Ne réintroduis ni CDN, ni police distante, ni outil d'audience, ni
+intégration tierce** sans passer d'abord par la politique et, s'il faut un consentement, par un
+bandeau au registre Atlas. Deux en-têtes tiennent cette promesse face à Cloudflare, et ne se
+retirent pas : `Cache-Control: no-transform` sur tout HTML (sinon Cloudflare y injecte sa mesure
+d'audience) et `NEL: {"max_age":0}`, posé par Caddy sur les deux domaines (sinon Cloudflare fait
+envoyer par les navigateurs leurs erreurs réseau à `a.nel.cloudflare.com` ; vérifié le 25-09 :
+Cloudflare n'ajoute plus alors ni `NEL` ni `Report-To`).
+
+**Le nombre de visites sur 30 jours** (`visites.py`, LaunchAgent `com.ccf-web.visites`, toutes
+les heures) remplace le compteur en direct (retour d'Antoine le 25-09 : « le compteur en simultané
+ne dépassera que rarement 1 »). Il se compte dans le journal de Caddy, sans l'adresse IP, avec la
+définition de Cloudflare (une page ouverte depuis un autre site, un lien ou un favori ; la
+navigation interne ne compte pas) ; comme chez Cloudflare, seuls les robots qui se déclarent sont
+retirés (choix d'Antoine, 25-09 : 10 458 visites sur 30 jours, dont environ les deux tiers viennent
+de programmes qui se font passer pour des navigateurs ; exiger `Sec-Fetch-Dest: document` les
+écarterait). Seuls des totaux par jour sont gardés (`var/visites.json`, 400 jours) ; le serveur les
+rend sous le titre de la marque (`.nav__visites`, téléphone et ≥ 1161 px) et dans le pied, sans
+aucun script chez le visiteur. Un jeton d'API Cloudflare (Analytics:Read) permettrait d'afficher
+à la place les chiffres de leur tableau de bord.
+
+**Les formulaires publics passent par `frein.py`** (cinq envois par dix minutes et par IP, en
+mémoire, empreinte salée) : contact et infolettre.
+
+**Chaque formulaire porte l'avis de collecte** `includes/collecte_avis.html` (`avis_type`
+infolettre ou contact, `avis_cls` = le petit texte du formulaire), un champ piège `.ccf-hp` et,
+pour l'infolettre, son `data-source`. Changer le texte de l'avis infolettre, c'est changer
+`config.NL_CONSENT_VERSION` (preuve du consentement, LCAP art. 13).
+
+**L'infolettre obéit à la Loi canadienne anti-pourriel.** Double confirmation par BOUTON (un GET
+n'abonne, ne désabonne ni ne modifie rien : les filtres de messagerie ouvrent les liens) ; réponse
+du formulaire identique quel que soit l'état de l'adresse ; changement de préférences confirmé
+depuis la boîte ; `List-Unsubscribe` + `List-Unsubscribe-Post` sur chaque lettre ; adresse postale,
+courriel et politique dans chaque pied (`email_service._mentions_legales`, `newsletter._footer`).
+L'adresse postale est « à venir » depuis le 25-09 : `CCF_IDENTITE['adresse_lignes']` est vide et
+les pieds l'omettent ; tant qu'elle manque, la LCAP n'est pas entièrement remplie ;
+aucune réactivation depuis le panneau. Les durées (demande non confirmée 30 j, preuve de retrait
+3 ans, envois 12 mois, journaux 30 j et 12 mois) sont appliquées chaque nuit par
+`scripts/purge_retention.py` (LaunchAgent `com.ccf-web.retention`, 04 h 20).
+
+**Les portes de la plateforme** (chantier du 25-09-2026, tests : `data-server/tests/
+test_securite_portes.py`). Toute route qui vérifie un mot de passe ou un code passe par
+`data-server/garde.py` : un frein par adresse en mémoire, et un frein par COMPTE en base
+(`auth_echecs`, 20 mots de passe erronés par heure, 5 codes par quart d'heure et 20 par jour),
+que le serveur MCP charge par son chemin pour compter les mêmes échecs. Un secret se garde par
+`data-server/coffre.py` : secrets TOTP chiffrés (`CCF_COFFRE_CLE` dans `data-server/.env`, à
+sauvegarder avec lui, jamais avec la base), jetons à usage unique (réinitialisation, codes et
+jetons OAuth) en SHA-256, cookie de session chiffré et `Secure`. Un compte naît avec un LIEN
+D'ACTIVATION (`db.create_user`, sept jours, usage unique), jamais avec un mot de passe envoyé par
+courriel. Une route qui touche au compte relit la clé en base (vivante, ordinaire, non éphémère)
+au lieu de se fier à sa signature ; un geste sensible redemande le mot de passe et répond 403, pas
+401 (l'explorateur ferme la session sur tout 401). En base, seuls `ccf_app`, `antoine` et les
+paliers MCP se connectent ; les fonctions `SECURITY DEFINER` ne s'exécutent plus par `PUBLIC`
+(`sql/securite_plateforme.sql`, à rejouer après `sql/mcp_roles.sql`). Les blocs Caddy du CCF
+renvoient vers l'adresse publique toute connexion qui n'arrive pas du tunnel : `Cf-Connecting-Ip`
+n'est fiable qu'à cette condition.
 
 ---
 
