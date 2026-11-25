@@ -1269,9 +1269,13 @@ changé : il lit son `.env` à travers le lien. Le détail vaut pour toute la ma
   le service se recharge ensuite. `courrier.py`, qui relit le `.env` quand il change, voit la
   nouvelle valeur sans recharge (§4bis.16) ;
 · **`CCF_COFFRE_CLE` a désormais sa sauvegarde** dans 1Password, avec le `.env` qui la porte ;
-· **les tâches launchd démarrent derrière `~/.local/bin/secrets-gate`**, qui attend le coffre à
-  l'ouverture de session. Une tâche nouvelle qui lit des secrets prend cette porte en tête de
-  `ProgramArguments`, sinon elle démarre sans ses mots de passe après un redémarrage.
+· **les tâches launchd attendent le coffre derrière une porte**, `~/.local/bin/secrets-gate`
+  (`secrets-gate.py` pour Python), à l'ouverture de session. Le programme d'origine reste le
+  premier élément de `ProgramArguments` et exécute la porte :
+  `[/bin/bash, secrets-gate, /bin/bash, script.sh]`. macOS accorde l'accès aux dossiers
+  protégés au programme que launchd lance : la porte mise en tête retirait aux scripts leur
+  accès complet au disque (régression du 24-11-2026, corrigée le soir même). Une tâche
+  nouvelle sans porte démarre sans ses mots de passe après un redémarrage.
 Pourquoi une copie en mémoire plutôt qu'une lecture à chaque lancement : le forfait 1Password
 plafonne à 1 000 requêtes par jour pour tout le compte, et la machine lance près de 80 tâches.
 
