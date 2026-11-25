@@ -748,7 +748,9 @@ générique ».
 
 Héros à maille, rangées d'index numérotées, vignette-document (mini-page esquissée, survol
 `rotate(-2.2deg)` + soulèvement), chips CCF, **pilule média** (`ccfMediaBtn` : logo + lien, trois
-tailles `lg`/`xs`/`plain`, registre dupliqué dans `newsletter.py`), loader de page, kit de
+tailles `lg`/`xs`/`plain`, registre dupliqué dans `newsletter.py` et lu par `publications.py` ;
+c'est elle qui nomme un média ou un support, jamais une chaîne en capitales « TYPE · MÉDIA »
+à pictogramme, voir §5bis), loader de page, kit de
 révélations au défilement — tous décrits dans le skill `esthetique-ccf`.
 
 ### 5.6 Base et méthode — le registre `dbx` (database-canon.css, 31-08)
@@ -814,6 +816,20 @@ vulgarisation en ambre `#b9862e`, rapports en prune `#8a68a8`. Chaque ton existe
 valeurs (`--fam`, `--fam-ink`, `--fam-pale`, `--fam-lum`), posées par les classes
 `.pubs-f--<famille>` ; le texte d'une famille tient 4,9:1 au moins sur clair et 7:1 sur le vert
 du pavé. Aucun liseré : la famille se lit au pictogramme et à la couleur (interdit nº 1).
+Le pictogramme vit dans le sélecteur et sur les couvertures typographiques ; il ne précède plus
+le type dans les lignes de métadonnées (voir le paragraphe suivant).
+
+**Le support se nomme dans la pilule-média** (reprise d'Antoine, 25-11-2026 : « OP-ED · LA
+PRESSE » précédé du pictogramme « fait très IA »). Une carte, une rangée, un feuillet ou une
+ligne de la liste compacte ouvre sur la **pilule** du support (`.ccf-media`, la même qui nomme
+les médias dans l'observatoire, macro `pilule` de `pub_pieces.html`), puis le **type** en casse
+de phrase à la couleur de sa famille, puis la **date** en `--font-mono`. **Aucune puce** entre
+eux : l'écart et la typographie séparent. Le logo vient du registre des pilules
+(`reg(...)` de `includes/media_link.html`), que `publications._pilule` lit et résout comme le
+navigateur ; un support hors registre (une revue, un éditeur) garde la pilule sans logo. La
+pilule se pose en `<span>` : la carte qui la porte mène déjà au texte. Le détail (volume,
+pages) et la langue s'écrivent ensuite en phrase, « Vol. 53, no. 2, pp. 383–402 » ou
+« Rapport final, 73 p., en français ».
 
 **Les images.** Le champ `image` d'une entrée porte l'adresse de son image de partage chez
 l'éditeur (og:image). Elle est chargée chez lui, sans référent, comme les vignettes de
@@ -851,11 +867,16 @@ Zenodo et la prépublication « LLM Tool » sont dans ce cas, à trancher par l'
 entrevues et les communications ne sont pas des publications.
 
 **En ligne depuis le 24-11-2026**, après un aperçu hors index validé par Antoine. On y arrive
-par le bloc de l'accueil et par la rangée de la page Équipe. Les adresses de l'aperçu
-(`/beta/publications`, `/fr/beta/publications`, `/beta/home`, `/fr/beta/accueil`) redirigent en
-301, comme celles de « La science à l'épreuve » ; l'interrupteur qui les servait est retiré.
-La barre de navigation ne reçoit pas d'entrée : sous 1 300 px elle n'a pas la place d'un
-huitième libellé (mesuré le 24-11).
+par la barre de navigation, par le bloc de l'accueil et par la rangée de la page Équipe. Les
+adresses de l'aperçu (`/beta/publications`, `/fr/beta/publications`, `/beta/home`,
+`/fr/beta/accueil`) redirigent en 301, comme celles de « La science à l'épreuve » ;
+l'interrupteur qui les servait est retiré.
+**« Publications » est le quatrième libellé de la barre**, après « Base et méthode »
+(demande d'Antoine, 25-11-2026). Avec huit libellés, la rangée débordait juste au-dessus du
+hamburger (mesuré à 901 px : 48 px de trop en français, 14 en anglais). Entre 901 et 1 000 px,
+`atlas-shell.css` resserre donc les liens (7 px de chaque côté au lieu de 13) et les marges de
+la barre. Mesuré le 25-11 de 901 à 1 920 px dans les deux langues : une seule ligne, rien ne
+sort de la barre. Un neuvième libellé demande de refaire cette mesure.
 
 **Les vignettes des membres** vivent dans `static/assets/images/mini/` (160 px, 5 à 6 Ko, même
 nom de fichier que le portrait) : les portraits d'origine pèsent jusqu'à 2 Mo (§3.5).
