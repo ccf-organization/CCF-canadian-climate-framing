@@ -204,7 +204,8 @@ Deux feuilles sur **toutes** les pages, dans cet ordre : `static/css/main.css` (
 source canonique) puis `atlas-shell.css` (la coquille du registre récent). Toute autre feuille est
 ajoutée par sa page via `extra_css` : `home-concepts.css` (accueil publié, variante
 `research-refined`), `about-atlas.css`, `team-atlas.css`, `contact-atlas.css`,
-`database-atlas.css`, `services-newsletter.css`, `observatory-atlas.css`, `obs-rail.css` ;
+`database-atlas.css`, `services-newsletter.css`, `observatory-atlas.css`, `obs-rail.css`,
+`publications-atlas.css` ;
 Base et méthode charge en dernier `database-canon.css` (le jeu de composants `dbx`, il
 « ferme la marche » sur les deux feuilles précédentes).
 
@@ -405,6 +406,14 @@ date=no,address=no,email=no">` plus la règle `a[x-apple-data-detectors]{color:i
 qu'iOS applique là où il ignore la balise. Une valeur qui n'est ni une URL ni une adresse (un
 identifiant, un jeton, un mot de passe) reste du texte, mais reçoit sa couleur explicitement.
 
+**Exception : le texte écrit par un visiteur.** Le formulaire de contact relaie depuis notre propre
+adresse un message que nous n'avons pas écrit. Ses liens sont donc **désarmés**
+(`privfiles[.]online`, `https[:]//`) par `neutralise_liens` (`routes/contact.py`) avant d'entrer
+dans les briques ; une mise en garde en braise s'affiche sous la manchette, et l'objet porte
+« [lien externe] ». Motif : trois envois d'hameçonnage du même acteur (30-07, 22-09 et 15-10-2026)
+sont arrivés chez l'équipe avec le lien de l'attaquant en vert maison, sous l'expéditeur
+« CCF Project ». Un lien désarmé échappe à la détection des clients, qui ne le repeignent donc pas.
+
 **Chaque mention du guide porte son lien.** Quand une lettre renvoie au guide de branchement, elle
 donne l'adresse cliquable au même endroit, pas seulement dans le bouton de la manchette : un lecteur
 qui parcourt la lettre par le milieu ne remonte pas au bouton.
@@ -514,7 +523,16 @@ un chiffre serif de 30 px à l'encre pâle `#c9d9cc`, dans sa propre colonne —
 ronde pleine collée au nom. Le nom de l'acteur est un titre, donc en serif.
 
 **Une lettre n'a qu'une façon de présenter un acteur.** Podium, voix par rôle, classement : la même
-rangée partout.
+rangée partout. Deux variations seulement, posées le 01-10 : le podium des **organisations** est le
+**miroir** de celui des personnes (rang en filigrane à droite, chiffre du score à gauche de sa
+piste, qui se remplit à partir de lui — `_lh_gauge(number_side='left')`) ; et la rangée d'une
+**figure par type** met dans la colonne du rang le **symbole du type**, celui que le site donne à
+chaque voix (`window.ccfRoles.icon`, `role_meta.html`), tiré en PNG sur un disque de la couleur du
+type (`static/assets/roles/`, 30 px). Ce disque est le marqueur du kicker de rôle : ✦ n'y double pas.
+
+**Chaque partie d'une section ouvre sur un sous-titre qui se voit** (`_sub_head`) : marqueur, capitales
+de 11 px en encre forêt, sur un filet pleine largeur. Une ligne grise de 8,5 px sans marqueur n'ouvrait
+rien — le lecteur entrait dans le podium sans savoir qu'il changeait de partie.
 
 **L'encart de résumé est celui des notes d'analyse** (`.anz-story`) : fond `#f2f7f3`, filet
 `#c9d9cc`, rayon 5 px, prose en serif, et son **kicker À L'INTÉRIEUR** du bloc, en capitales
@@ -551,6 +569,66 @@ ouvre donc sur « aucun jeton à manipuler », donne les quatre gestes de la pag
 (`data-server/templates/connect.html`, constantes `ETAPES`, `CONNEXION`, `ESSAI`) **mot pour mot**,
 et ne place le jeton qu'en avant-dernier, pour le terminal et les éditeurs. Le mot « OAuth »
 n'apparaît nulle part : la page ne l'écrit jamais.
+
+### 4bis.16 La remise — un seul point de sortie, sur notre domaine
+**Toute lettre du Journal sort par `courrier.py`** (22-11-2026) : les éditions
+(`newsletter.send`) comme la confirmation, la bienvenue et la première édition
+(`routes/newsletter._send_email`). Aucun de ces deux fichiers n'ouvre plus de connexion SMTP.
+
+**L'expéditeur est `journal@ccf-project.ca`, par Resend**, dès que `RESEND_API_KEY` existe dans
+le `.env` du site ; les réponses reviennent à la boîte de l'équipe par `Reply-To`. Motif : les
+éditions partaient en nombre de l'adresse gmail.com du projet et arrivaient dans les pourriels.
+Une adresse gratuite qui envoie une liste, avec des liens vers un domaine qu'aucune signature ne
+relie à elle, est le profil que les filtres déclassent. Le domaine portait déjà de quoi signer
+(mesuré le 22-11 : DKIM `resend._domainkey`, MX et SPF de `send.`, DMARC en `p=none`, aucun MX à
+la racine) ; `python courrier.py --diagnostic` relit ces enregistrements, la clé, le domaine chez
+Resend et la politique de confidentialité, `--essai adresse` envoie une lettre d'essai.
+
+**La boîte Gmail reste le repli**, sans clé comme en cas de refus de Resend. Un repli alors que
+la clé existe n'est jamais silencieux : `newsletter._alerte_repli` écrit à l'équipe le jour même.
+`COURRIER_TRANSPORT=gmail` ramène l'ancien chemin sans retirer la clé. Le `.env` est relu quand
+il change : une clé posée vaut dès la lettre suivante, sans redémarrage. Sur le chemin Gmail, la
+lettre ne pose pas de `Message-ID` (Gmail écrit le sien, sous son domaine).
+
+**Chaque lettre d'édition porte une clé d'idempotence**,
+`ccf/<cadence>/<date d'édition>/<langue>/<id d'abonné>` : une tentative coupée entre l'envoi et
+son inscription au registre ne produit pas de doublon à la reprise. Le registre
+`newsletter_deliveries` garde le transport, l'identifiant du message et son dernier état
+(`sql/newsletter_transport.sql`).
+
+**Avant chaque envoi, `newsletter_suivi.py` relit chez Resend le sort des lettres des quatre
+derniers jours.** Une adresse qui a rebondi, ou que Resend refuse de servir, passe en `bounced` ;
+un destinataire qui a signalé la lettre comme indésirable passe en `unsubscribed` ; l'équipe
+reçoit un courriel. Écrire encore à ces adresses coûte sa réputation à l'expéditeur. Le suivi
+demande une clé de plein accès. Une clé restreinte à l'envoi le laisse inactif ; le journal de
+l'envoi l'écrit.
+
+**Le poids : la lettre garde tout son contenu** (décision d'Antoine, 22-11-2026). Gmail coupe
+un message dont le HTML dépasse 102 400 octets. Le pied passe alors derrière « Afficher
+l'intégralité du message », avec le lien de retrait, l'adresse postale et les mentions que la Loi
+anti-pourriel exige. Mesuré le 22-11 : 123 689 octets au quotidien français, 151 281 à
+l'hebdomadaire, pour 20 à 23 Ko de texte lisible. Un budget qui raccourcissait les listes et
+retirait les biographies du classement a été écrit puis retiré le jour même (« il y a moins de
+contenu, je veux tout garder ») : **aucun mécanisme ne retire une rangée, une biographie, un média
+ou une vignette pour tenir un poids.** Deux fonctions de `newsletter.py` restent :
+
+· **`_compacte`** allège le balisage sans toucher au texte : piles de polices courtes (`SERIF`,
+`SANS`), préfixes de navigateur, classes `nl-*` que plus aucune feuille ne lit. Elle rend 10 à
+13 Ko. Les couleurs restent en six chiffres, qu'Outlook pour Windows lit mieux que la forme abrégée.
+· **`_pese`** écrit au journal de l'envoi le poids de chaque lettre, par langue et par cadence ; il
+signale tout dépassement de la coupure (`COUPURE_GMAIL`).
+
+Mesuré le 22-11 après compaction : quotidien français 113 355 octets, anglais 111 327 ;
+hebdomadaire français 138 221, anglais 135 778. **Les quatre éditions restent au-dessus de la
+coupure : la dette est ouverte.** Les styles incorporés du §4bis.6 font la moitié du poids (50 578
+octets sur 101 685 mesurés dans un quotidien français). Les porter en classes dans une feuille
+`<style>` est la seule voie connue qui garde tout le contenu sous la coupure ; elle contredit le
+§4bis.6 et attend une décision. Tests : `tests/test_poids_lettre.py` (composition factice, aucun
+accès à la base).
+
+Tests de la remise : `tests/test_courrier.py` (transports simulés, aucune écriture en base). Les lettres de
+compte, le formulaire de contact et les chiens de garde écrivent encore par Gmail en direct ;
+`courrier.adresse('observatoire')` et `courrier.adresse('alerte')` les attendent.
 
 ---
 
@@ -711,6 +789,82 @@ Sept briques, et rien d'autre : `.dbh` (pavé de chapitre), `.dbx-lead` (chapô)
 
 ---
 
+## 5bis. Les publications — le registre et sa page
+<!-- ccf:acces founder -->
+**Une seule source : `publications.json`, lu par `publications.py`.** La page (`/publications`,
+`/fr/publications`, gabarit unique `templates/publications.html`, feuille
+`publications-atlas.css`), le bloc de l'accueil (`includes/home_publications.html`, règles dans
+`home-concepts.css`) et la rangée de la page Équipe en sont trois lectures. Aucun gabarit n'écrit
+un titre, une date, une adresse ou un décompte. Le fichier est relu dès qu'il change : ajouter
+une publication ne demande aucune recharge. Les champs sont décrits en tête de `publications.py`.
+
+**Deux rangs** (demande d'Antoine, 24-11-2026). Le premier réunit ce qui mobilise la base
+(`lien: ccf`) et ce qui porte sur le climat (`lien: climat`) : cartes de l'accueil, rangées
+illustrées par année, mention « Base CCF ». Le second (`lien: autre`) réunit les autres travaux
+des membres, en liste compacte à vignettes au bas de la page. **La une** revient à la parution
+la plus récente qui mobilise la base, sauf entrée épinglée (`"une": true`) ; elle se compose sur
+un pavé vert, sa photographie à gauche. L'accueil montre la une, puis les deux parutions les
+plus récentes du premier rang.
+
+**La couleur dit la famille de textes** (reprise d'Antoine, 24-11 : « davantage de contraste de
+couleurs avec notre vert »). `publications.FAMILLES` regroupe les types en quatre familles, et
+chacune a son pictogramme au trait (`includes/pub_pieces.html`) et son ton, pris à la palette
+feutrée du pouls (§4.3) : recherche en bleu `#3b7396`, tribunes en braise `#c0533f`,
+vulgarisation en ambre `#b9862e`, rapports en prune `#8a68a8`. Chaque ton existe en quatre
+valeurs (`--fam`, `--fam-ink`, `--fam-pale`, `--fam-lum`), posées par les classes
+`.pubs-f--<famille>` ; le texte d'une famille tient 4,9:1 au moins sur clair et 7:1 sur le vert
+du pavé. Aucun liseré : la famille se lit au pictogramme et à la couleur (interdit nº 1).
+
+**Les images.** Le champ `image` d'une entrée porte l'adresse de son image de partage chez
+l'éditeur (og:image). Elle est chargée chez lui, sans référent, comme les vignettes de
+l'observatoire : le site n'en garde aucune copie, et la politique de confidentialité le dit déjà
+(§9bis). `publications._reduite` demande la largeur utile aux services d'images qui en acceptent
+une (The Conversation, Le Devoir). Nos propres figures sont servies par le site
+(`static/assets/images/publications/`). **La couverture typographique est toujours composée
+dessous** (mât, nom du support en serif, lignes esquissées, au ton de la famille) : une entrée
+sans image la montre, et une image qui ne se charge pas se retire seule. Les couvertures de
+revue ne s'inscrivent pas : seule une sur onze se laissait charger, et la liste aurait été
+inégale.
+
+**Le sélecteur.** Sous le pavé, quatre filtres se croisent : les familles en colonnes à
+filigrane (la géométrie du choix de Services, le décompte en grand chiffre), les signataires, la
+frise des parutions par année, la recherche. Chaque décompte et chaque barre de la frise se
+recalculent sous les trois autres filtres ; l'état vit dans l'ancre de l'adresse
+(`#famille=tribunes&annee=2026`). Dans le pavé, **la table de lecture** pose en éventail les
+trois parutions illustrées les plus récentes ; un feuillet mène à sa rangée. Chaque publication
+porte un bouton « Citer » (un `<details>` natif) qui donne sa référence et son BibTeX à copier.
+Sans script, tout le registre reste affiché et chaque référence se lit.
+
+**Ce qu'une entrée porte.** Le titre exact, dans sa langue, jamais traduit ; la langue du texte
+en toutes lettres (interdit nº 9) ; les auteurs dans l'ordre de signature, les membres écrits
+comme dans `config.TEAM_MEMBERS` (c'est ce qui pose leur vignette et le lien vers leur site) ;
+l'adresse de l'éditeur, le DOI résolu quand il existe ; l'image de l'article quand son éditeur
+en publie une ; pour le premier rang, une phrase de
+résumé par langue, écrite d'après le chapô ou le résumé réel, chiffres compris (§6.1). Chaque
+entrée se vérifie sur la page de l'éditeur ou dans Crossref : les CV et les sites personnels
+portent des titres de travail et des dates fausses (constaté au recensement du 24-11).
+
+**Ce qui ne s'inscrit pas.** La prépublication du papier de méthode, que son DOI remplace
+(§6.4) ; un document de travail marqué « ne pas citer » ; un dépôt déclaré remplacé ; un texte à
+paraître ; une entrée dont le titre porte un mot banni (interdit nº 12 : le dépôt du code sur
+Zenodo et la prépublication « LLM Tool » sont dans ce cas, à trancher par l'équipe). Les
+entrevues et les communications ne sont pas des publications.
+
+**En ligne depuis le 24-11-2026**, après un aperçu hors index validé par Antoine. On y arrive
+par le bloc de l'accueil et par la rangée de la page Équipe. Les adresses de l'aperçu
+(`/beta/publications`, `/fr/beta/publications`, `/beta/home`, `/fr/beta/accueil`) redirigent en
+301, comme celles de « La science à l'épreuve » ; l'interrupteur qui les servait est retiré.
+La barre de navigation ne reçoit pas d'entrée : sous 1 300 px elle n'a pas la place d'un
+huitième libellé (mesuré le 24-11).
+
+**Les vignettes des membres** vivent dans `static/assets/images/mini/` (160 px, 5 à 6 Ko, même
+nom de fichier que le portrait) : les portraits d'origine pèsent jusqu'à 2 Mo (§3.5).
+Tests : `tests/test_publications.py` (registre réel valide, mots bannis, ordre, une, repli sur
+la dernière lecture, familles et frise, images, référence et BibTeX, adresses définitives
+servies et aperçu redirigé).
+
+---
+
 ## 6. Rédaction
 <!-- ccf:acces founder -->
 
@@ -772,11 +926,32 @@ crucial, notably, seamless, holistic, nuanced, fostering, showcasing, testament 
   sont présentées ci-dessous dans l'ordre où elles ont été mises en œuvre » — jamais « dans
   l'ordre où elles se produisent » quand elles ont déjà eu lieu. Le présent est réservé à ce qui
   tourne réellement chaque jour (formulation d'Antoine, 31-08).
-- **Les titres de section disent la méthode, directement** : « Notre méthode, en bref » /
-  « Our method, in a nutshell », « Ce que notre méthode a produit, de 1978 à aujourd'hui ».
-  Registre possessif et descriptif ; jamais d'aphorisme (« Tout ce que l'observatoire sait, il
-  l'a appris des journalistes » : rejeté), jamais d'image (« Une même chaîne lit l'archive et
-  l'actualité du matin » : rejeté), jamais de pivot par négation ni de « : » à effet.
+- **Les titres sont nominaux, possessifs et descriptifs, sur toutes les surfaces** (reprise
+  d'Antoine, 24-11-2026 : « ce style doit être appliqué absolument partout. Je veux pas de
+  phrases IA »). Un titre nomme sa section à la première personne du pluriel. Ses quatre
+  modèles : « Neuf provinces et un territoire sont représentés dans notre corpus », « La méthode
+  et nos modèles », « L'information que nous extrayons dans chaque phrase », « La fiabilité de
+  nos modèles ». « Notre méthode, en bref » / « Our method, in a nutshell » (31-08) reste juste.
+  Bannis, dans les deux langues :
+  · les titres en « Ce que… / Ce qui… / Comment… / Pourquoi… / Qui… » (What / How / Why / Who),
+    déjà rejetés le 11-11 ; « Ce que notre méthode a produit » est devenu « Les résultats de
+    notre méthode, de 1978 à aujourd'hui » ;
+  · la question et l'impératif publicitaire (« Mettez l'observatoire à votre service ») ;
+  · les fragments hachés (« Lire l'actualité. Étudier les récits. Accéder aux données. ») ;
+  · le couple à virgule d'effet (« Six dimensions, lues dans chaque phrase », « Trois gestes,
+    deux minutes », « Média contre média, province contre province ») ;
+  · le titre-phrase qui porte son chiffre (« Deux opérations ont construit les modèles, quatre
+    tournent chaque jour », « Sur 100 phrases, les modèles en classent environ 87 comme
+    l'annotatrice experte » : rejetés). Le chiffre passe dans la description, avec sa base ;
+  · l'aphorisme (« Tout ce que l'observatoire sait, il l'a appris des journalistes »), l'image
+    (« Une même chaîne lit l'archive et l'actualité du matin »), le pivot par négation, le
+    « : » à effet.
+  La règle vaut pour les kickers, les libellés de bouton, les sous-titres de frise et les liens
+  de méthode. Une question citée entre guillemets comme exemple de demande reste une citation.
+  Le balayage du 24-11 a repris les pages publiques dans les deux langues. Reste à reprendre :
+  la note pilote (« Ce qui s'est passé », « Qui porte la parole des feux », « Ce que cela
+  signifie pour les acteurs climatiques »), dont la page, le PDF et l'artifact changent
+  ensemble (§6.6), et le gabarit du §8.3 qui nomme encore l'encart « Ce qui s'est passé ».
 - **L'extraction d'entités relève TROIS familles : personnes, organisations ET LIEUX.**
   Toute énumération qui n'en cite que deux est fausse (31-08 : « il manque les lieux »).
   Mesuré en base le 31-08-2026 : 2 201 586 personnes, 2 211 194 organisations,
@@ -996,6 +1171,11 @@ visualisation : jamais deux fois la même dans une note.
   `--fit-w`, `--fit-h`. Deux pièges tenus : une scène en panneau fermé mesure 0 (un rapport nul
   l'écraserait), et l'observateur de taille se pose sur le PARENT, jamais sur la scène dont on
   fixe la hauteur — sans quoi il boucle et le navigateur coupe ses notifications.
+- **La date d'un évènement est celle de son dernier article**, partout — lettre, journal, carte,
+  recherche, tiroir de détail : `last_date` (max des dates de ses `doc_ids`, posé par
+  `events_pipeline`), repli `peak_date`. Le pic est une statistique de courbe, pas une date
+  d'affichage ; le 01-10 la carte et le tiroir dataient encore par le pic quand la lettre datait par
+  le dernier article, et un même évènement portait deux dates.
 - **✦ n'est pas un emoji** (U+2726) : faux positif classique des audits.
 - **Deux systèmes chromatiques coexistent** : la marque est bleu nuit + or, le site est forêt +
   teal + menthe. Le logo n'a jamais été reteinté ; ne « corrige » pas cela sans décision.
@@ -1048,11 +1228,14 @@ pour l'infolettre, son `data-source`. Changer le texte de l'avis infolettre, c'e
 **L'infolettre obéit à la Loi canadienne anti-pourriel.** Double confirmation par BOUTON (un GET
 n'abonne, ne désabonne ni ne modifie rien : les filtres de messagerie ouvrent les liens) ; réponse
 du formulaire identique quel que soit l'état de l'adresse ; changement de préférences confirmé
-depuis la boîte ; `List-Unsubscribe` + `List-Unsubscribe-Post` sur chaque lettre ; adresse postale,
+depuis la boîte ; `List-Unsubscribe` + `List-Unsubscribe-Post` sur chaque lettre (posés par
+`courrier.py`, §4bis.16) ; adresse postale,
 courriel et politique dans chaque pied (`email_service._mentions_legales`, `newsletter._footer`).
-L'adresse postale est « à venir » depuis le 25-09 : `CCF_IDENTITE['adresse_lignes']` est vide et
-les pieds l'omettent ; tant qu'elle manque, la LCAP n'est pas entièrement remplie ;
-aucune réactivation depuis le panneau. Les durées (demande non confirmée 30 j, preuve de retrait
+L'adresse postale est posée depuis le 22-11-2026 (`CCF_IDENTITE['adresse_lignes']`, politique
+1.4) : destinataire, voie, ville et code postal, pays. `adresse_ligne` sert les pieds de courriel,
+`adresse_courte` les endroits qui écrivent déjà le nom du projet (pied de la politique, avis de
+collecte). Une liste vide fait écrire « Adresse postale à venir » à la politique et retire la ligne
+des pieds. Aucune réactivation depuis le panneau. Les durées (demande non confirmée 30 j, preuve de retrait
 3 ans, envois 12 mois, journaux 30 j et 12 mois) sont appliquées chaque nuit par
 `scripts/purge_retention.py` (LaunchAgent `com.ccf-web.retention`, 04 h 20).
 
@@ -1072,6 +1255,38 @@ paliers MCP se connectent ; les fonctions `SECURITY DEFINER` ne s'exécutent plu
 (`sql/securite_plateforme.sql`, à rejouer après `sql/mcp_roles.sql`). Les blocs Caddy du CCF
 renvoient vers l'adresse publique toute connexion qui n'arrive pas du tunnel : `Cf-Connecting-Ip`
 n'est fiable qu'à cette condition.
+
+**Les secrets ne sont plus en clair sur le disque** (24-11-2026, demande d'Antoine : « la totalité
+des secrets de cette machine […] stockés et appelés de manière hyper sécurisée sur 1password »).
+Les trois `.env` (site, `data-server`, `mcp-server`), `data-server/postgrest/ccf-postgrest.conf`
+et `~/.ccf_scidata_keys.env` sont des **liens** vers une copie en mémoire vive (`~/.secrets/run`),
+remplie depuis 1Password par `~/.local/bin/secrets`. Le code n'a pas
+changé : il lit son `.env` à travers le lien. Le détail vaut pour toute la machine et vit dans
+`~/.config/secrets/LISEZMOI.md`. Trois conséquences pour ce dépôt :
+· **on n'édite jamais un `.env` sur place** (la copie est en lecture seule, et une écriture
+  « réussie » remplacerait le lien par un fichier en clair) : `secrets definir <fichier> <NOM>`
+  pose la variable dans 1Password, la valeur lue sur l'entrée standard, puis rafraîchit la copie ;
+  le service se recharge ensuite. `courrier.py`, qui relit le `.env` quand il change, voit la
+  nouvelle valeur sans recharge (§4bis.16) ;
+· **`CCF_COFFRE_CLE` a désormais sa sauvegarde** dans 1Password, avec le `.env` qui la porte ;
+· **les tâches launchd démarrent derrière `~/.local/bin/secrets-gate`**, qui attend le coffre à
+  l'ouverture de session. Une tâche nouvelle qui lit des secrets prend cette porte en tête de
+  `ProgramArguments`, sinon elle démarre sans ses mots de passe après un redémarrage.
+Pourquoi une copie en mémoire plutôt qu'une lecture à chaque lancement : le forfait 1Password
+plafonne à 1 000 requêtes par jour pour tout le compte, et la machine lance près de 80 tâches.
+
+**Un secret ne s'écrit pas dans un journal.** Le journal d'accès du front masque la valeur des
+paramètres d'adresse qui portent un secret (`k`, `key`, `token`, `api_key`, `secret`,
+`password`) : un filtre posé dans `gunicorn.conf.py` (`_MasqueSecrets`, `post_worker_init`) les
+remplace par `[masque]` avant l'écriture. Motif : le préchauffage de l'image du pouls appelle
+`/api/newsletter/pulse.png?…&fresh=1&k=<CCF_PULSE_FRESH_KEY>`, et la clé s'est retrouvée dans
+`logs/access.log` et ses archives tournées (24-11-2026, nettoyées). Les autres paramètres ne
+changent pas : les scripts qui lisent ce journal comptent sur `s=`, `d=` et `lang=`. La clé
+passe désormais par l'en-tête `X-CCF-Fresh-Key` (`newsletter.py`, `routes/api.py` ; le paramètre
+`k=` reste lu). Le préchauffage se présente sous `CCF-Journal/1.0` : sous l'agent par défaut de
+Python, `botguard` le refusait (403) à chaque envoi, au moins depuis le 25-10-2026, et la lettre
+partait sans que l'image du pouls ait été recalculée. **Un programme de la maison qui appelle le
+front se nomme** dans son `User-Agent` ; les bibliothèques génériques y sont refusées.
 
 ---
 
